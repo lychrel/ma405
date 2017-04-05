@@ -1,0 +1,259 @@
+\documentclass[twocolumn,draft]{article}
+\usepackage{savetrees}
+% a more conservative option:
+% \documentclass[]{article}
+% \usepackage{fullpage}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\usepackage{todonotes}
+\usepackage{graphicx}
+\usepackage{showlabels}
+
+\usepackage[english]{babel}
+\usepackage{blindtext}
+% \Blindtext to use.
+
+\RequirePackage[l2tabu, orthodox]{nag}
+\usepackage[all,warning]{onlyamsmath}
+
+\usepackage{hyperref}
+
+% blue text for questions
+\newcommand{\bt}[1]{\textcolor{blue}{#1}}
+
+\title{MA 405, 4/5/17}
+\author{John M. Lynch\footnote{Undergraduate ECE/Physics, NCSU, Raleigh, NC 27705. E-Mail: \texttt{jmlynch3@ncsu.edu}}}
+\date{\today}
+
+\begin{document}
+  \maketitle
+  \section*{A=QR}
+  \underline{Recall}: Gram-Schmidt process for transforming a set of independent column vectors
+  $\{v_{1}\ldots v_{n}\}$ into a set of \emph{orthonormal} vecs $\{q_{1}\ldots q_{n}\}$
+  
+  Works by successively projecting onto \underline{lines} and subtracting. \\
+  
+  \noindent \underline{ex}
+  \begin{equation}
+  	v_{1} = \begin{bmatrix}
+				1 \\
+				0 \\
+				1
+  			\end{bmatrix},
+	v_{2} = % 1, 0, 0
+	v_{3} = %2,1,0
+  \end{equation}
+  
+  which yields
+  
+  \begin{equation}
+  	q_{1} = , q_{2} = , q_{3} = % 1/srt(2) * v1, .1/sqrt(2) * v2, q3 = 0,1,0
+  \end{equation}
+  
+  \emph{check:} these vecs are orthonormal.
+  
+  Useful for \underline{matrix factorization}!
+  
+  example:
+  
+  \begin{equation}
+  	A=LU,
+  \end{equation}
+  
+  useful for repeatedly solving $A\vec{x}=\vec{b}$ for many $\vec{b}$
+  
+  Different factorization: \\
+  
+  \noindent $A=QR$, $Q$ orthonormal columns, $R$ upper triangular \\
+  
+  \noindent Useful for solving least-squares problems for many data vectors.
+  
+  How to get this factorization?
+  
+  \underline{ex}
+  
+  \begin{equation}
+  	A = \begin{bmatrix}
+			v_{1}| & v_{2} | & v_{3} |
+		\end{bmatrix}
+	\in \Re^{3\times 3},
+	B = \begin{bmatrix}
+			q_{1}| & q_{2} | & q_{3} |
+		\end{bmatrix}
+	\in \Re^{3\times 3} %\text{ with orthonormal columns, result of G-Sch}
+  \end{equation}
+  
+  What should R equal if we want A=QR?
+  
+  \begin{equation}
+  	v_{1} \& q_{1}:
+  \end{equation}
+  They are already in the same direction:
+  \begin{equation}
+  	\vec{v_{1}} = ()\vec{q_{1}}
+  \end{equation}
+  is its projection onto $\vec{q_{1}}$!
+  
+  Now, how to find the projection coefficient:
+  \begin{equation}
+  	\vec{v_{1}} = (\frac{\vec{q_{1}}^{T}\vec{v_{1}}}{\vec{q_{1}}^{T}\vec{q_{1}}})\vec{q_{1}}
+  \end{equation}
+  
+  And since $\vec{q{_1}}$ has length 1, 
+  
+  \begin{equation}
+  	\boxed{\vec{v_{1}} = (\vec{q_{1}}^{T}\vec{v_{1}})\vec{q_{1}}}
+  \end{equation}
+  
+  How are $\vec{v_{2}}$ and $\vec{q_{2}}$ related to each other?
+  
+  Well, $\vec{v_{2}}$ has a part in the direction of $\vec{q_{1}}$, but
+  all the rest of it is in the direction of $\vec{q_{2}}$ (because of the G-Sch process).
+  
+  So,
+  
+  \begin{equation}
+  	\vec{v_{2}}= ( )\cdot \vec{q_{1}} + ( )\cdot \vec{q_{2}}
+  \end{equation}
+  
+  all of $\vec{v_{2}}$ is in one of these two directions...
+  
+  Coefficients are found by \emph{projections!}
+  
+  %\begin{align*}
+  %	\vec{v_{2}} &= (\frac{q1Tv2}{q1Tq1})\cdot \vec{q_{1}}
+  					%+ (\frac{q2Tv2}{q2Tq2})\cdot \vec{q_{2}} \\
+					%\boxed{\vec{v_{2}} &= (q1Tv2)q1 + (q2Tv2)q2}
+ % \end{align*}
+ 
+ $\vec{v_{3}}$ has parts in directions of q1 and q2, but all the rest is in direction of q3!
+ 
+ \begin{equation}
+ 	v_{3} = (q1Tv3)q1 + (q2Tv3)q2 + (q3Tv3)q3
+ \end{equation}
+ 
+ Now we know how all vectors v are related to all vectors q. This should tell us what R needs to be.
+ 
+ Since q1 and v1 are related so simply,
+ 
+ \begin{equation}
+ 	R = \begin{bmatrix}
+			q_{1}^{T}v_{1} & q_{1}^{T}v_{2} & q_{1}^{T}v_{3}\\
+			0 			   & q_{2}^{T}v_{2} & q_{2}^{T}v_{3}\\
+			0 			   & 	  0			& q_{3}^{T}v_{3}
+ 		\end{bmatrix}
+ \end{equation}
+ col R1 says you only first vector v1 to get to vector q1. 0 in R32 bc q2 doesn't depend on v3 at
+ all.
+ 
+ Check: compare $j$th column of A to $j$th column of QR:
+ 
+ \begin{equation*}
+ 	(QR)_{j} = Q\cdot (R)_{jth col} = Q \begin{bmatrix}
+											q1Tvj \\
+											q2Tvj \\
+											qjTvj \\
+											0 \\
+											0 \\
+											0
+										\end{bmatrix}
+ \end{equation*}
+  
+  This is a linear combination of the different columns of Q, so it's also
+  
+  \begin{equation}
+  	(q1Tvj)q1 + (q2Tvj)q2 + \ldots + (qjTvj)qj + 0\cdot q_{j+1} + 0 + 0\cdot q_{n}
+  \end{equation}
+  
+  Now compare to $v_{j}$, the $j$th column of A, to the above. They're equal! So \\
+  
+  \noindent \underline{Theorem}: any A$\in\Re^{m\times n}$ having independent columns 
+  will have a ``QR'' factorization
+  
+  \begin{equation}
+  	A = Q \cdot R
+  \end{equation}
+  
+  where $Q\in\Re^{m\times n}$ has orthonormal columns and $R\in\Re^{n\times n}$ has
+  upper-triangular structure and is \underline{invertible}
+  
+  \section*{Facts about orthonormal matrices, Q}
+  
+  \begin{enumerate}
+	  \item $(Q^{T}Q)_{ij} = \sum_{k=1}^{n}Q^{T}_{ith row}\cdot Q_{jth col}
+	  					   = (Q_{ithcol})^{T}\cdot(Q_{jth col}) = 0 i\neq j, 1 i=j$. i.e,
+	  \item $Q^{T}Q = I$
+	  \item If Q is square, Q is invertible, \underline{and} $Q^{-1}=Q^{T}$
+	  \item $||Q\vec{x}|| = ||\vec{x}||$ (Q doesn't change the length of things)
+	  \item $(Q\vec{x})^{T}(Q\vec{y}) = \vec{x}^{T}Q^{T}Q\vec{y} = \vec{x}^{T}\vec{y}$
+	  		(Q preserves inner products)
+	  \item \underline{projections}: since q's are all orthogonal, they are a \underline{basis}
+	  		for Col(Q). Any vector $\vec{b}\in$Col(Q) has a linear combination
+			$\vec{b} = c1q1 + c2q2 + \ldots + cnqn=$ a sum of \underline{projections} of
+			$\vec{b}$ onto 1D lines formed by the basis vectors $q_{j}$
+			(where each of the coefficients can be found
+			by \underline{projection}: $c_{j} = (\vec{q_{j}}^{T}\vec{b})$)
+  \end{enumerate}
+ 
+ \section*{using QR to solve least squares}
+ 
+ Suppose
+ 
+ \begin{equation*}
+ 	A\vec{x} = \vec{b}
+ \end{equation*}
+ 
+ where $A\in\Re^{m\times n}$, overdetermined system. No exact solution, \underline{but}
+ the columns of A are independent. 
+ 
+ So, as a least-square problem:
+ 
+ \begin{equation*}
+ 	\hat{x} = \text{min}||A\hat{x}-\vec{b}||^{2}
+ \end{equation*}
+ 
+ which can be found by solving the \underline{Normal equations}:
+ 
+ \begin{equation*}
+ 	A^{T}A\hat{x} = A^{T}\vec{b}
+ \end{equation*}
+ 
+ If I had a QR factorization,
+ 
+ \begin{align*}
+ 	(QR)^{T}(QR)\hat{x} &= (QR)^{T}\vec{b} \\
+	R^{T}Q^{T}QR\hat{x} &= R^{T}Q^{T}\vec{b}
+ \end{align*}
+ 
+ but since Q has orthonormal columns, $Q^{T}Q = I$, and
+ 
+ \begin{equation}
+ 	R^{T}R\hat{x} = R^{T}Q^{T}\vec{b}
+ \end{equation}
+ 
+ \emph{and}, since R is invertible, so $R^{T}$ is, too:
+ 
+ \begin{align*}
+ 	R^{-T}(R^{T}R\hat{x}) &= R^{-T}(R^{T}Q^{T}\vec{b}) \\
+	\boxed{R\hat{x} = Q^{T}\vec{b}}
+ \end{align*}
+ % QTb is a vector
+ 
+ Now just solve \emph{that} linear system for $\hat{x}$. But, since R is upper triangular,
+ this is a triangular system, which is way easier to solve! Particularly for many $\vec{b}$
+ vectors.
+ 
+ \section*{End of Midterm Material}
+ Next class: Chapter 4
+ 
+ 
+ 
+\end{document}
