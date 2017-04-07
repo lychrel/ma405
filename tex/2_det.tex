@@ -1,0 +1,336 @@
+\documentclass[twocolumn,draft]{article}
+\usepackage{savetrees}
+% a more conservative option:
+% \documentclass[]{article}
+% \usepackage{fullpage}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\usepackage{todonotes}
+\usepackage{graphicx}
+\usepackage{showlabels}
+
+\usepackage[english]{babel}
+\usepackage{blindtext}
+% \Blindtext to use.
+
+\RequirePackage[l2tabu, orthodox]{nag}
+\usepackage[all,warning]{onlyamsmath}
+
+\usepackage{hyperref}
+
+% blue text for questions
+\newcommand{\bt}[1]{\textcolor{blue}{#1}}
+
+\title{MA 405, 4/7/17}
+\author{John M. Lynch\footnote{Undergraduate ECE/Physics, NCSU, Raleigh, NC 27705. E-Mail: \texttt{jmlynch3@ncsu.edu}}}
+\date{\today}
+
+\begin{document}
+  \maketitle
+  \section*{Chapter 4: Determinants (4.1, 4.2)}
+  
+  \underline{Recall}: The determinant is a number which is computed from a matrix
+  $A\in\Re^{n\times n}$ which can be used to determine:
+  
+  \begin{enumerate}
+  	\item Is A an invertible matrix?
+	\item What is the ``scaling factor'' of a linear transformation?
+	\item Pivots of A?
+  \end{enumerate}
+  
+  \subsection*{ex:} For a $2\times 2$ matrix,
+  \begin{equation*}
+  	A=\begin{bmatrix}
+  		a & b \\ c & d
+  	\end{bmatrix}
+  \end{equation*}
+  and
+  \begin{equation*}
+  	\text{det}(A) = ad - bc
+  \end{equation*}
+  
+  \begin{enumerate}
+  	\item 
+	    How does this tell me about invertibility?
+  
+	    \begin{equation*}
+	    	A^{-1} = \frac{1}{ad-bc}\begin{bmatrix}
+	    								d & -b \\ -c & a
+	    							\end{bmatrix}
+	    \end{equation*}
+  
+	    Now we can see how the determinant shows when the inverse exists and when it doesn't:
+	    you can't divide by $\frac{1}{\text{det}(A)}$ if $\text{det(A)}=0$. So, if the
+	    determinant is $0$, then $A^{-1}$ is not defined, and $A$ is not invertible.
+		
+	\item   How does it tell you about scaling factor?
+	
+		change of variables:
+		\begin{equation}
+			(x,y) \leftarrow (r,\theta)
+		\end{equation}
+		where $(x,y)$ are normal coordinates for $\Re^{2}$ and $(r,\theta)$ are polar coordinates.
+		
+		To convert, you'd do
+		
+		\begin{equation*}
+			\int\int g(x,y) dxdy = \int\int g(r\cos{\theta}, r\sin{\theta})(?) \leftarrow
+				(rdrd\theta)
+		\end{equation*}
+		
+		To find the remaining factor in a change of variables, construct the Jacobian matrix
+		using all of the partial derivatives:
+		
+		To go from $(x,y)$ to $(r,\theta)$, Jacobian matrix is
+		
+		\begin{equation*}
+			J = \begin{bmatrix}
+					\frac{\delta x}{\delta r} & \frac{\delta x}{\delta \theta} \\
+					\frac{\delta y}{\delta r} & \frac{\delta y}{\delta \theta}
+				\end{bmatrix}
+		\end{equation*}
+		
+		The determinant of the Jacobian matrix tells you the ``scaling factor'' you get when
+		you change variables. Using $x=r\cos{\theta}$ and $y=r\sin{\theta}$, the Jacobian is
+		
+		\begin{equation*}
+			J = \begin{bmatrix}
+					\cos{\theta} & -r\sin{\theta} \\
+					\sin{\theta} & r\cos{\theta}
+				\end{bmatrix} 
+		\end{equation*} 
+		
+		and
+		
+		\begin{align*}
+			\text{det}(J) &= \cos{\theta}\cdot r\cos{\theta} - (-r\sin{\theta})\sin{\theta}
+						  &= r\cos^{2}{\theta} + r\sin^{2}{\theta} = r(1)
+		\end{align*}
+		
+		which makes sense, because the polar change is indeed
+		$dxdy \rightarrow rdrd\theta$
+  \end{enumerate}
+  
+  Invertibility and determinants will be used mostly for \underline{eigenvalue problems}!
+  (One of the two main kinds of linear algebraic problems:
+  \begin{enumerate}
+  	\item $A\mathbf{x}=\mathbf{b}$, solve for \textbf{x}
+	\item $A\mathbf{x} = \lambda \mathbf{x}$, solve for \textbf{x} and $\lambda$)
+  \end{enumerate}
+  
+  If I know the matrix A and $\lambda$, solve for \textbf{x}:
+  
+  \begin{align*}
+	  A\mathbf{x} &= \lambda \mathbf{x} \\
+	  A\mathbf{x} - \lambda \mathbf{x} &= 0 \\
+	  A\mathbf{x} - \lambda I \mathbf{x} &= 0 \\
+	  (A - \lambda I)\mathbf{x} &= 0 \\
+	  (\text{{matrix} - \text{a number}})\mathbf{x} &= 0
+  \end{align*}
+  
+  Are there non-trivial solutions to this? I.e. non-zero?
+  
+  Is $A-\lambda I$ invertible? More importantly, where is it singular?
+  
+  Answer it with det!
+  
+  \subsection*{``Defining'' determinant in terms of its properties}
+  
+  There are two different ways to think about the determinant.
+  
+  \subsubsection*{Facts about determinants}
+  
+  \begin{enumerate}
+  	\item det(I) $=1$, for any identity matrix $I\in\Re^{n\times n}$
+		\begin{enumerate}
+			\item 
+				\begin{equation*}
+					\Big|\begin{vmatrix}
+						1 & 0 \\
+						0 & 1
+					\end{vmatrix}\Big|
+					= 1^{2} - 0 = 1
+				\end{equation*}
+		\end{enumerate}
+	\item Row exchanges change the \underline{sign} of the determinant
+		\begin{enumerate}
+			\item
+				\begin{align*}
+					\begin{vmatrix}
+						a & b \\ c & d
+					\end{vmatrix} &= ad - bc \\
+  					\begin{vmatrix}
+  						c & d \\ a & b
+  					\end{vmatrix} &= -(ad - bc)
+				\end{align*}
+		\end{enumerate}
+	\item Determinans are \underline{linear} in the first row.
+		\begin{enumerate}
+			\item 
+				\begin{align*}
+					\begin{vmatrix}
+						ta & tb \\ c & d
+					\end{vmatrix}
+					&= tad - tbc \\
+					&= t(ad-bc) \\
+					&= t
+  					\begin{vmatrix}
+  						a & b \\ c & d
+  					\end{vmatrix} \tag*{(scalar multiplication)}
+				\end{align*}
+				That's one half of proving linearity. Let's prove the other half:
+				\begin{align*}
+					\begin{vmatrix}
+						a + \alpha & b + \beta \\ c & d
+					\end{vmatrix}
+					&= (a+\alpha)d - (b+\beta)c  \\
+					&= ad + \alpha d - bc - \beta c \\
+					&= (ad - bc) + (\alpha d - \beta c) \\
+					&=
+					\begin{vmatrix}
+						a & b \\ c & d
+					\end{vmatrix} +
+					\begin{vmatrix}
+						\alpha & \beta \\ c & d
+					\end{vmatrix} \tag*{(addition)}
+				\end{align*}
+		\end{enumerate}
+  \end{enumerate}
+  
+  \underline{Warning}: this does \underline{not} mean
+  
+  \begin{align*}
+  	det(tA) \neq t\cdot det(A)
+  \end{align*}
+  
+  But, since
+  
+  \begin{equation*}
+  	tA = \Big(\text{\underline{all} rows of A get scaled by t}\Big)
+		 \Rightarrow \text{so there are n many rows means you pull out n factors of t
+		 (one per row)}
+  \end{equation*}
+  
+  So, the true version is
+  
+  \begin{equation*}
+  	\text{det}(tA) = t^{n}\cdot\text{det}(A)
+  \end{equation*}
+  
+  \underline{Warning}: this is also not true:
+  
+  \begin{equation*}
+	  \text{det}(A+B) \neq \text{det}(A) + \text{det}(B)
+  \end{equation*}
+  
+  \noindent (Using $1$ \& $2$) \\
+  
+  Let $P$ be a permutation matrix. (Like I but with rows exchanged.)
+  
+  Then $\text{det}(P) = \pm 1$ depending on the number of row exchanges.
+  
+  \subsubsection*{Other interesting facts (from main 3)}
+  \begin{enumerate}
+	\setcounter{enumi}{3}
+  	\item If A has 2 identical rows,
+		\begin{equation*}
+			\text{det}(A) = 0
+		\end{equation*}
+	\setcounter{enumi}{7}
+	\item
+		\begin{enumerate}
+			\item If A is a singular matrix, det(A)$=0$.
+			\item If A is invertible, det(A)$\neq0$
+		\end{enumerate} 
+	\setcounter{enumi}{4}
+	\item Row elimination does \underline{not} change det!
+		\begin{enumerate}
+			\item ex: $R2 \leftarrow R2 - 3R1$
+		\end{enumerate}
+	\setcounter{enumi}{9}
+	\item det($A$)$=$det($A^{T}$)
+	\setcounter{enumi}{8}
+	\item det$(A^{-1})=\frac{1}{\text{det}(A)}$
+	\setcounter{enumi}{6}
+	\item If A is triangular, then det(A)$=$ product of \underline{all} the diagonal entries of A.
+  \end{enumerate}
+  
+  We can use these properties to compute det without formulas! % formulae?
+  
+  \subsection*{ex:} Find det(B) for
+  \begin{equation*}
+  	B = \begin{bmatrix}
+  			2 & 1 & 0 \\
+			1 & 1 & 0 \\
+			5 & 9 & 1
+  		\end{bmatrix}
+  \end{equation*}
+  
+  We want to transform B into a triangular form (via row ops) so we can get det from product of
+  diagonals.
+  
+  First, exchange R1 \& R2:
+  
+  \begin{equation*}
+  	B = \begin{bmatrix}
+  			1 & 1 & 0 \\
+			2 & 1 & 0 \\
+			5 & 9 & 1
+  		\end{bmatrix} \tag*{$-$det(B)}
+  \end{equation*}
+  
+  $R2 \leftarrow R2-2R1$:
+  
+  \begin{equation*}
+  	\begin{bmatrix}
+  		whatever 
+  	\end{bmatrix} \tag*{$-$det(B)}
+  \end{equation*}
+  
+  $R3\leftarrow R3-5R1$
+  
+  \begin{equation*}
+  	\begin{bmatrix}
+  		whatever 
+  	\end{bmatrix} \tag*{$-$det(B)}
+  \end{equation*}
+  
+  $R3\leftarrow R3 + 4R2$
+  
+  \begin{equation*}
+  	\begin{bmatrix}
+  		1 & 1 & 0 \\
+		0 & -1 & 0 \\
+		0 & 0 & 1
+  	\end{bmatrix} = u = \tag*{$-$det(B)}
+  \end{equation*}
+  
+  So
+  
+  \begin{equation*}
+  	\text{det}(u) = -\text{det}(B)
+  \end{equation*}
+  
+  and since
+  
+  \begin{equation*}
+  	\text{det}(u) = 1\cdot -1\cdot 1 = -1
+  \end{equation*}
+  
+  then 
+  
+  \begin{equation*}
+  	-1 = -\text{det}(B) \Rightarrow \text{det}(B) = 1
+  \end{equation*}
+
+  
+  
+\end{document}
